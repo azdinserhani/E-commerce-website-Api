@@ -8,10 +8,12 @@ import productRoute from "./Routes/productRoute.js";
 import orderRoute from "./Routes/orderRoute.js";
 import cartRoute from "./Routes/cartRoute.js";
 import paymentRoute from "./Routes/stripeRoute.js";
+import cors from "cors";
 dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
+app.use(cors());
 mongoose
   .connect(process.env.DATABASE_URL)
   .then(() => {

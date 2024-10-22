@@ -9,6 +9,7 @@ import {
   deleteProduct,
   getAllProduct,
   getProduct,
+  getTopSellingProducts,
   searchProduct,
   updateProduct,
 } from "../Controller/product.js";
@@ -21,4 +22,5 @@ router.get("/", verifyAuth, getAllProduct);
 router.get("/search", verifyAuth, searchProduct);
 router.put("/:id", verifyAdmin, updateProduct);
 router.delete("/:id", verifyAdmin, deleteProduct);
+router.get("/top-selling-products", verifyAdmin, getTopSellingProducts);
 export default router;

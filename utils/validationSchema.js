@@ -45,7 +45,7 @@ export const createUserSchema = {
     },
     isLength: {
       options: {
-        min: 5,
+        min: 6,
         max: 30,
       },
       errorMessage:

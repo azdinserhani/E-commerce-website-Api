@@ -17,16 +17,25 @@ export const getUser = tryCatch(async (req, res) => {
 
 //update user
 export const updateUser = tryCatch(async (req, res) => {
-  if (req.body.password) {
-    req.body.password = CryptoJS.AES.encrypt(
-      req.body.password,
+  const { ...other } = req.body;
+  console.log(req.user);
+  
+  // Check if the user is an admin
+  if (!req.user.isAdmin) {
+    // If not an admin, do not allow changing the isAdmin field    
+    delete other.isAdmin; // Remove isAdmin from the update object
+  }
+  
+
+  if (other.password) {
+    other.password = CryptoJS.AES.encrypt(
+      other.password,
       process.env.HASHING_STRING
     ).toString();
   }
-
   const findUser = await User.findByIdAndUpdate(
     req.params.id,
-    { $set: req.body },
+    { $set: other },
     { new: true }
   );
   res.status(200).json({
@@ -86,8 +95,9 @@ export const getUserStat = tryCatch(async (req, res) => {
       },
     },
   ]);
+
   res.status(200).json({
     status: "success",
-    data: data,
+    data: data.sort((a, b) => a._id - b._id),
   });
 });

@@ -10,9 +10,13 @@ export const createOrder = tryCatch(async (req, res) => {
     throw new AppError(100, "validation Error", 400, result.array());
   }
   const data = matchedData(req);
+  console.log(data);
 
-  const newOrder = new Orders(data);
-  const savedOrder = await newOrder.save();
+  const newOrder = new Orders({
+    userId: req.user._id,
+    products: data.products,
+  });
+  // const savedOrder = await newOrder.save();
   res.status(200).json({
     status: "succuss",
     data: savedOrder,
@@ -47,15 +51,57 @@ export const deleteOrder = tryCatch(async (req, res) => {
 
 //find order by user ID
 export const getOrder = tryCatch(async (req, res) => {
-  const findCart = await Orders.find({ userId: req.params.userId });
+  const findOrder = await Orders.find({ userId: req.params.userId })
+    .populate({
+      path: "products.productId",
+      select: ["img", "title"],
+    })
+    .populate({
+      path: "userId", // Populate the userId field to get user info
+      select: "username email", // Include the fields you need from the User model
+    });
 
-  if (!findCart.isEmpty) {
+  if (findOrder.isEmpty) {
     throw new AppError(200, "Order not found", 400);
   }
 
   res.status(200).json({
     status: "succuss",
-    data: findUser,
+    data: findOrder,
+  });
+});
+export const getOrderById = tryCatch(async (req, res) => {
+  const findOrder = await Orders.findById(req.params.id)
+    .populate({
+      path: "products.productId",
+      select: ["img", "title"],
+    })
+    .populate({
+      path: "userId", // Populate the userId field to get user info
+      select: "username email", // Include the fields you need from the User model
+    });
+
+  if (findOrder.isEmpty) {
+    throw new AppError(200, "Order not found", 400);
+  }
+
+  res.status(200).json({
+    status: "succuss",
+    data: findOrder,
+  });
+});
+
+//get all order
+export const getAllOrder = tryCatch(async (req, res) => {
+  const findOrder = await Orders.find();
+
+  if (findOrder.isEmpty) {
+    throw new AppError(200, "Order not found", 400);
+  }
+
+  res.status(200).json({
+    status: "succuss",
+    data: findOrder,
   });
 });
 
@@ -92,3 +138,5 @@ export const getIncome = tryCatch(async (req, res) => {
     data: income,
   });
 });
+
+

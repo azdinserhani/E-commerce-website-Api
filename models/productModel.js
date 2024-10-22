@@ -15,8 +15,13 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    battery: {
+      type: Number,
+      required: true,
+    },
     category: {
-      type: Array,
+      type: String,
+      required: true,
     },
     colors: {
       type: Array,
@@ -28,6 +33,14 @@ const ProductSchema = new mongoose.Schema(
     isStock: {
       type: Boolean,
       default: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    brand: {
+      type: String,
+      required: true,
     },
   },
   {

@@ -15,7 +15,6 @@ export const register = tryCatch(async (req, res) => {
     data.password,
     process.env.HASHING_STRING
   ).toString();
-
   const newUser = new User({
     username: data.username,
     email: data.email,

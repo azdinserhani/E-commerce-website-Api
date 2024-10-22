@@ -1,4 +1,5 @@
 import AppError from "../AppError.js";
+import Orders from "../models/order.js";
 import Product from "../models/productModel.js";
 import APiFeatures from "../utils/ApiFeatures.js";
 import { tryCatch } from "../utils/tryCatch.js";
@@ -6,7 +7,18 @@ import CryptoJS from "crypto-js";
 
 //create product
 export const createProduct = tryCatch(async (req, res) => {
-  const { title, desc, img, category, colors, price, isStock } = req.body;
+  const {
+    title,
+    desc,
+    img,
+    category,
+    colors,
+    price,
+    isStock,
+    quantity,
+    brand,
+    battery,
+  } = req.body;
   const newProduct = new Product({
     title,
     desc,
@@ -15,6 +27,9 @@ export const createProduct = tryCatch(async (req, res) => {
     colors,
     price,
     isStock,
+    quantity,
+    brand,
+    battery,
   });
 
   const savedProduct = await newProduct.save();
@@ -89,5 +104,56 @@ export const getAllProduct = tryCatch(async (req, res) => {
     status: "succuss",
     result: products.length,
     data: { products },
+  });
+});
+
+export const getTopSellingProducts = tryCatch(async (req, res) => {
+  const topSellingProducts = await Orders.aggregate([
+    {
+      $unwind: "$products", // Unwind the products array
+    },
+    {
+      $addFields: {
+        "products.productId": {
+          $convert: {
+            input: "$products.productId",
+            to: "objectId", // Convert productId to ObjectId
+            onError: null, // Handle conversion errors gracefully
+            onNull: null,
+          },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "products", // The name of the products collection
+        localField: "products.productId", // After conversion, productId is now ObjectId
+        foreignField: "_id", // Match with the _id in the products collection
+        as: "productDetail",
+      },
+    },
+    {
+      $unwind: "$productDetail", // Unwind the productDetail array
+    },
+    {
+      $group: {
+        _id: "$productDetail.title", // Group by product name
+        totalQuantity: { $sum: "$products.quantity" }, // Sum the quantity of each product
+        totalAmount: { $sum: "$totalAmount" }, // Optionally sum total amounts if needed
+        price: { $first: "$products.price" },
+        img: { $first: "$productDetail.img" },
+      },
+    },
+    {
+      $sort: { totalQuantity: -1 }, // Sort by total quantity to get top-selling products
+    },
+    {
+      $limit: 5,
+    },
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    data: topSellingProducts,
   });
 });

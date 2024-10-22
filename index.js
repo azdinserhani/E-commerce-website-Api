@@ -8,6 +8,7 @@ import productRoute from "./Routes/productRoute.js";
 import orderRoute from "./Routes/orderRoute.js";
 import cartRoute from "./Routes/cartRoute.js";
 import paymentRoute from "./Routes/stripeRoute.js";
+import webhookRoute from "./Routes/webHookRoute.js";
 import cors from "cors";
 dotenv.config();
 const app = express();
@@ -30,6 +31,7 @@ app.use("/api/products", productRoute);
 app.use("/api/order", orderRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/payment", paymentRoute);
+app.use("/api", webhookRoute);
 app.use(errorHandler);
 app.listen(port, () => {
   console.log(`server run in port : ${port}`);

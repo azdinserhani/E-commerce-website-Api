@@ -1,7 +1,7 @@
 import express from "express";
 import { payment } from "../Controller/payment.js";
-import { verifyAuth } from "../middleware/verifyToken.js";
+import { verifyAuth, verifyToken } from "../middleware/verifyToken.js";
 const router = express.Router();
 
-router.post("/", verifyAuth,payment);
+router.post("/", verifyToken,payment);
 export default router;

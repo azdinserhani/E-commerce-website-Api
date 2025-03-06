@@ -3,8 +3,6 @@ import Orders from "../models/order.js";
 import Product from "../models/productModel.js";
 import APiFeatures from "../utils/ApiFeatures.js";
 import { tryCatch } from "../utils/tryCatch.js";
-import CryptoJS from "crypto-js";
-
 //create product
 export const createProduct = tryCatch(async (req, res) => {
   const {
@@ -31,10 +29,9 @@ export const createProduct = tryCatch(async (req, res) => {
     brand,
     battery,
   });
-
   const savedProduct = await newProduct.save();
   res.status(200).json({
-    status: "succuss",
+    status: "success",
     data: savedProduct,
   });
 });
@@ -93,17 +90,18 @@ export const searchProduct = tryCatch(async (req, res) => {
   });
 });
 //get all Product
-export const getAllProduct = tryCatch(async (req, res) => {
+export const getAllProduct = tryCatch(async (req, res, next) => {
   const features = new APiFeatures(Product.find(), req.query)
     .filter()
     .sorting()
     .limiting()
     .pagination();
-  const products = await features.query;
+  const productsData = await features.query;
+
   res.status(200).json({
-    status: "succuss",
-    result: products.length,
-    data: { products },
+    status: "success",
+    result: productsData.length,
+    data: { products: productsData },
   });
 });
 

@@ -20,8 +20,8 @@ import {
 router.post("/", verifyAuth, checkSchema(createOrderSchema), createOrder);
 router.put("/:id", verifyAdmin, updateOrder);
 router.delete("/:id", verifyAdmin, deleteOrder);
-router.get("/find/:userId", verifyAuth, getOrder);
-router.get("/findOrder/:id", verifyAuth, getOrderById);
+router.get("/find/:userId", verifyToken, getOrder);
+router.get("/findOrder/:id", verifyToken, getOrderById);
 router.get("/", verifyAdmin, getAllOrder);
 router.get("/income", verifyAdmin, getIncome);
 

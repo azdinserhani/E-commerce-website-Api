@@ -15,13 +15,23 @@ export const register = tryCatch(async (req, res) => {
     data.password,
     process.env.HASHING_STRING
   ).toString();
+
   const newUser = new User({
     username: data.username,
     email: data.email,
     password,
   });
   const savedUser = await newUser.save();
-  res.status(200).json(savedUser);
+  const accessToken = jwt.sign(
+    {
+      id: savedUser._id,
+      isAdmin: savedUser.isAdmin,
+    },
+
+    process.env.JWT_SECRET,
+    { expiresIn: "90d" }
+  );
+  res.status(200).json({ info: savedUser, accessToken });
 });
 
 export const login = tryCatch(async (req, res) => {

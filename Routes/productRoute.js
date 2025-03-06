@@ -16,9 +16,9 @@ import {
 
 const router = express.Router();
 
-router.get("/find/:id", verifyAuth, getProduct);
+router.get("/find/:id", verifyToken, getProduct);
 router.post("/", verifyAdmin, createProduct);
-router.get("/", verifyAuth, getAllProduct);
+router.get("/", getAllProduct);
 router.get("/search", verifyAuth, searchProduct);
 router.put("/:id", verifyAdmin, updateProduct);
 router.delete("/:id", verifyAdmin, deleteProduct);
